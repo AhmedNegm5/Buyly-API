@@ -16,6 +16,14 @@ Buyly exposes a RESTful API that covers the entire shopping funnel: product disc
 - Hosted background services & rate limiting from `Microsoft.AspNetCore.RateLimiting`
 - Custom middleware for error handling, validation, and security headers
 
+### Runtime Stack Details
+
+- **API Host**: Minimal hosting model in `Program.cs` wires controllers, rate limiting, Swagger, and the middleware pipeline (`ErrorHandlingMiddleware`, `SecurityHeadersMiddleware`) before authentication/authorization runs.
+- **Data Layer**: `AppDbContext` uses EF Core with Pomelo MySQL ServerVersion auto-detection plus Fluent configurations for every entity. Migrations under `Buyly.Infrastructure/Data/Migrations` encode the schema history.
+- **Identity & Auth**: ASP.NET Identity manages users/roles; `TokenService` issues JWTs signed with the configured `JwtSettings`. `AuthService` coordinates registration, login, and reset-code flows.
+- **Payments & Integrations**: `PaymentService` calls PayPal’s two-step checkout flow via `PayPalHttpClient`; email notifications flow through `EmailSender` using the SMTP values in `EmailSettings`.
+- **Hosted Reliability Tasks**: `CartOrderCleanupService` runs as a background worker seeded via DI, reclaiming inventory from stale orders and purging abandoned carts based on `CleanupSettings`.
+
 ## Architecture
 
 - `Buyly.Domain`: Entities, enums, and specification abstractions that model products, orders, carts, payments, and reviews while remaining persistence-agnostic.
@@ -25,6 +33,7 @@ Buyly exposes a RESTful API that covers the entire shopping funnel: product disc
 
 ### Technical Highlights
 
+- **Domain model**: Core entities (`Product`, `Category`, `Order`, `Payment`, `Review`, `ReviewVote`, `CartItem`) inherit from `BaseEntity` to expose shared auditing metadata, while enums like `OrderStatus` capture lifecycle transitions.
 - **Specification-driven queries**: `ProductSpecification` and `ProductWithFiltersForCountSpecification` encapsulate filtering, sorting, pagination, and includes so controllers stay thin.
 - **Unit of Work + Generic Repository**: `IUnitOfWork` coordinates transactional persistence, while `IGenericRepository<T>` and concrete repositories expose reusable data access patterns.
 - **Identity + Roles**: `RoleSeeder` ensures `Customer` and `Admin` roles exist on startup. Auth flows run through `AuthService`, with custom `ITokenService` for JWT generation.
