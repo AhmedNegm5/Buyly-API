@@ -1,6 +1,6 @@
 # Buyly API
 
-Buyly is a layered ASP.NET Core backend for modern e-commerce experiences. It powers catalog browsing, customer carts, secure checkout, PayPal-based payments, rate-limited authentication, and admin workflows with a clean separation of concerns.
+Buyly is a layered ASP.NET Core backend for modern e-commerce experiences. It follows a Clean Architecture-inspired structure (Domain → Application → Infrastructure → API) to isolate business rules from frameworks, powering catalog browsing, customer carts, secure checkout, PayPal-based payments, and admin workflows.
 
 ## Project Overview
 
@@ -18,11 +18,11 @@ Buyly exposes a RESTful API that covers the entire shopping funnel: product disc
 
 ### Runtime Stack Details
 
-- **API Host**: Minimal hosting model in `Program.cs` wires controllers, rate limiting, Swagger, and the middleware pipeline (`ErrorHandlingMiddleware`, `SecurityHeadersMiddleware`) before authentication/authorization runs.
-- **Data Layer**: `AppDbContext` uses EF Core with Pomelo MySQL ServerVersion auto-detection plus Fluent configurations for every entity. Migrations under `Buyly.Infrastructure/Data/Migrations` encode the schema history.
-- **Identity & Auth**: ASP.NET Identity manages users/roles; `TokenService` issues JWTs signed with the configured `JwtSettings`. `AuthService` coordinates registration, login, and reset-code flows.
-- **Payments & Integrations**: `PaymentService` calls PayPal’s two-step checkout flow via `PayPalHttpClient`; email notifications flow through `EmailSender` using the SMTP values in `EmailSettings`.
-- **Hosted Reliability Tasks**: `CartOrderCleanupService` runs as a background worker seeded via DI, reclaiming inventory from stale orders and purging abandoned carts based on `CleanupSettings`.
+- Minimal hosting in `Program.cs` wires controllers, middleware, rate limiting, and Swagger before auth/authorization kicks in.
+- `AppDbContext` + EF Core + Pomelo MySQL drive persistence, with Fluent configurations and migrations checked into `Buyly.Infrastructure/Data/Migrations`.
+- ASP.NET Identity + `TokenService` issue JWTs with roles; `AuthService` handles login/register/reset flows.
+- `PaymentService` integrates with PayPal’s two-step capture flow; `EmailSender` uses configurable SMTP credentials.
+- `CartOrderCleanupService` runs in the background to cancel stale orders and clear abandoned carts using `CleanupSettings`.
 
 ## Architecture
 
@@ -33,7 +33,7 @@ Buyly exposes a RESTful API that covers the entire shopping funnel: product disc
 
 ### Technical Highlights
 
-- **Domain model**: Core entities (`Product`, `Category`, `Order`, `Payment`, `Review`, `ReviewVote`, `CartItem`) inherit from `BaseEntity` to expose shared auditing metadata, while enums like `OrderStatus` capture lifecycle transitions.
+- **Domain model**: Core entities (`Product`, `Category`, `Order`, `Payment`, `Review`, `ReviewVote`, `CartItem`) inherit from `BaseEntity` for consistent timestamps and IDs, while enums such as `OrderStatus` describe lifecycle transitions.
 - **Specification-driven queries**: `ProductSpecification` and `ProductWithFiltersForCountSpecification` encapsulate filtering, sorting, pagination, and includes so controllers stay thin.
 - **Unit of Work + Generic Repository**: `IUnitOfWork` coordinates transactional persistence, while `IGenericRepository<T>` and concrete repositories expose reusable data access patterns.
 - **Identity + Roles**: `RoleSeeder` ensures `Customer` and `Admin` roles exist on startup. Auth flows run through `AuthService`, with custom `ITokenService` for JWT generation.
@@ -64,10 +64,9 @@ Buyly exposes a RESTful API that covers the entire shopping funnel: product disc
 
 ## API Usage
 
-- Interactive documentation: launch Swagger UI at `/swagger` to explore every endpoint, inspect required request bodies, and execute calls directly from the browser with JWT auth support.
-- Scripted smoke tests: use `Buyly.API/Buyly.API.http` for quick registration/login/cart scenarios; the file captures the JWT token and reuses it in subsequent requests.
+- Interactive documentation: launch Swagger UI at `/swagger` to explore endpoints, inspect payloads, and authorize with JWT tokens.
 - Authentication: any non-public endpoint must send `Authorization: Bearer <jwt-token>` obtained from `/api/auth/login`. Tokens honor the signing/expiration rules in `JwtSettings`.
-- Admin workflows: create an admin user manually (seed role + assign via `UserManager` or SQL) before trying the `/api/admin/*` routes in Swagger or the `.http` file.
+- Admin workflows: create an admin user manually (seed role + assign via `UserManager` or SQL) before trying the `/api/admin/*` routes.
 
 ## Folder Structure
 
