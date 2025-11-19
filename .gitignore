@@ -52,3 +52,16 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# IDE settings
+.idea/
+.vscode/
+
+# Local configuration secrets
+appsettings.Development.json
+appsettings.Staging.json
+appsettings.Production.json
+Buyly.API/appsettings.Development.json
+Buyly.API/appsettings.Staging.json
+Buyly.API/appsettings.Production.json
+*.local.json

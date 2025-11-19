@@ -1,0 +1,47 @@
+@host = http://localhost:5133
+@json = application/json
+
+### Register
+POST {{host}}/api/auth/register
+Content-Type: {{json}}
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane@example.com",
+  "password": "P@ssw0rd!",
+  "confirmPassword": "P@ssw0rd!",
+  "phoneNumber": "+123456789",
+  "address": "123 Main St"
+}
+
+### Login
+POST {{host}}/api/auth/login
+Content-Type: {{json}}
+
+{
+  "email": "jane@example.com",
+  "password": "P@ssw0rd!"
+}
+
+> {% client.global.set("token", response.body.token); %}
+
+### List products
+GET {{host}}/api/products?pageIndex=1&pageSize=10
+Accept: {{json}}
+
+### Get cart (requires auth)
+GET {{host}}/api/cart
+Accept: {{json}}
+Authorization: Bearer {{token}}
+
+### Add item to cart
+POST {{host}}/api/cart/items
+Content-Type: {{json}}
+Authorization: Bearer {{token}}
+
+{
+  "productId": "00000000-0000-0000-0000-000000000000",
+  "quantity": 1
+}
+
