@@ -136,12 +136,7 @@ namespace Buyly.API.Extensions
                 {
                     Title = "Buyly E-Commerce API",
                     Version = "v1",
-                    Description = "API for shopping cart, checkout, orders, payments, and admin features. Use the two-step PayPal flow: create order -> redirect user -> capture.",
-                    Contact = new Microsoft.OpenApi.Models.OpenApiContact
-                    {
-                        Name = "Buyly Support",
-                        Email = "support@buyly.local"
-                    }
+                    Description = "Manages catalog browsing, customer carts, secure checkout, PayPal two-step payments, reviews, and admin tooling. Auth is JWT-based and routes are protected by role-aware policies."
                 });
 
                 c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
