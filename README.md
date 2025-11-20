@@ -12,7 +12,7 @@ Buyly exposes a RESTful API that covers the entire shopping funnel: product disc
 - Entity Framework Core + Pomelo MySQL provider
 - ASP.NET Identity for user management and roles
 - JWT bearer authentication with custom token service
-- PayPal Checkout SDK (two-step capture flow) and Stripe.NET (planned)
+- PayPal Checkout SDK (two-step capture flow)
 - Hosted background services & rate limiting from `Microsoft.AspNetCore.RateLimiting`
 - Custom middleware for error handling, validation, and security headers
 
