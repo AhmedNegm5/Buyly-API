@@ -4,6 +4,7 @@ using Buyly.Application.DTOs.Product;
 using Buyly.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buyly.API.Controllers.Admin
 {
@@ -19,6 +20,10 @@ namespace Buyly.API.Controllers.Admin
         }
 
         [HttpPost]
+        [SwaggerOperation(
+            Summary = "Admin: create product",
+            Description = "Creates a catalog product with inventory, pricing, description, and category assignment."
+        )]
         [ProducesResponseType(typeof(ApiResponse<ProductDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
@@ -28,6 +33,10 @@ namespace Buyly.API.Controllers.Admin
         }
 
         [HttpPut("{id:guid}")]
+        [SwaggerOperation(
+            Summary = "Admin: update product",
+            Description = "Updates product metadata (name, description, price, inventory, category)."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -44,6 +53,10 @@ namespace Buyly.API.Controllers.Admin
         }
 
         [HttpDelete("{id:guid}")]
+        [SwaggerOperation(
+            Summary = "Admin: delete product",
+            Description = "Permanently removes a product by its identifier."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)

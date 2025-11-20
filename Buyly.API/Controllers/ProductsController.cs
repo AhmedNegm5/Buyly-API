@@ -9,6 +9,7 @@ using Buyly.Domain.Specifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Buyly.API.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buyly.API.Controllers
 {
@@ -22,6 +23,10 @@ namespace Buyly.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "List products with filters",
+            Description = "Supports pagination, sorting, category filtering, search text, and price ranges via query parameters (see ProductSpecParams). Returns metadata plus the product collection."
+        )]
         [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll([FromQuery] ProductSpecParams specParams)
         {
@@ -40,6 +45,10 @@ namespace Buyly.API.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [SwaggerOperation(
+            Summary = "Get product details",
+            Description = "Fetches a single product by its GUID identifier, including category info, price, and rating details."
+        )]
         [ProducesResponseType(typeof(ApiResponse<ProductDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)

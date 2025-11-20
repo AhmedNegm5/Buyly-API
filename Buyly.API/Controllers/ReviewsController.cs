@@ -8,6 +8,7 @@ using Buyly.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Buyly.API.Models;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buyly.API.Controllers
 {
@@ -22,6 +23,10 @@ namespace Buyly.API.Controllers
 
         [HttpPost]
         [Authorize]
+        [SwaggerOperation(
+            Summary = "Create a review",
+            Description = "Allows a signed-in customer to leave a rating/comment for a product they purchased."
+        )]
         [ProducesResponseType(typeof(ApiResponse<ReviewDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -38,6 +43,10 @@ namespace Buyly.API.Controllers
 
         [HttpGet("product/{productId:guid}")]
         [AllowAnonymous]
+        [SwaggerOperation(
+            Summary = "List product reviews",
+            Description = "Returns public reviews for a specific product, sorted by recency."
+        )]
         [ProducesResponseType(typeof(ApiResponse<IEnumerable<ReviewDto>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProductReviews([FromRoute] Guid productId)
         {
@@ -47,6 +56,10 @@ namespace Buyly.API.Controllers
 
         [HttpGet("product/{productId:guid}/summary")]
         [AllowAnonymous]
+        [SwaggerOperation(
+            Summary = "Get product review summary",
+            Description = "Returns aggregate rating counts and averages for a product."
+        )]
         [ProducesResponseType(typeof(ApiResponse<ProductReviewSummaryDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetProductReviewSummary([FromRoute] Guid productId)
@@ -57,6 +70,10 @@ namespace Buyly.API.Controllers
 
         [HttpGet("my-review/product/{productId:guid}")]
         [Authorize]
+        [SwaggerOperation(
+            Summary = "Get my review for a product",
+            Description = "Returns the authenticated user’s personal review for a product, if it exists."
+        )]
         [ProducesResponseType(typeof(ApiResponse<ReviewDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -77,6 +94,10 @@ namespace Buyly.API.Controllers
 
         [HttpPut("{reviewId:guid}")]
         [Authorize]
+        [SwaggerOperation(
+            Summary = "Update a review",
+            Description = "Allows the review author to modify rating or comment text."
+        )]
         [ProducesResponseType(typeof(ApiResponse<ReviewDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -93,6 +114,10 @@ namespace Buyly.API.Controllers
 
         [HttpDelete("{reviewId:guid}")]
         [Authorize]
+        [SwaggerOperation(
+            Summary = "Delete a review",
+            Description = "Soft-deletes a review if it belongs to the authenticated user."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -113,6 +138,10 @@ namespace Buyly.API.Controllers
 
         [HttpPost("{reviewId:guid}/vote")]
         [Authorize]
+        [SwaggerOperation(
+            Summary = "Vote on a review",
+            Description = "Marks a review as helpful/unhelpful (upvote/downvote) for the current user."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]

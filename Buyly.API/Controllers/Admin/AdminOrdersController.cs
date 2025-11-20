@@ -4,6 +4,7 @@ using Buyly.Application.DTOs.Order;
 using Buyly.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buyly.API.Controllers.Admin
 {
@@ -19,6 +20,10 @@ namespace Buyly.API.Controllers.Admin
         }
 
         [HttpPut("{orderId:guid}/status")]
+        [SwaggerOperation(
+            Summary = "Admin: update order status",
+            Description = "Allows staff to transition an order (Processing, Shipped, Delivered, Cancelled, etc.)."
+        )]
         [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> UpdateOrderStatus(Guid orderId, [FromBody] UpdateOrderStatusDto dto)
@@ -35,6 +40,10 @@ namespace Buyly.API.Controllers.Admin
         }
 
         [HttpDelete("{orderId:guid}")]
+        [SwaggerOperation(
+            Summary = "Admin: delete order",
+            Description = "Cancels/removes an order record. Use carefully—typically only for test or fraud orders."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOrder(Guid orderId)

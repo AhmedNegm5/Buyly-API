@@ -8,6 +8,7 @@ using Buyly.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buyly.API.Controllers;
 
@@ -26,6 +27,10 @@ public class OrdersController : BaseApiController
     
     [EnableRateLimiting(RateLimitPolicies.Strict)]
     [HttpPost("create")]
+    [SwaggerOperation(
+        Summary = "Create order from cart",
+        Description = "Transforms the authenticated user’s cart into an order (line items, totals, shipping info) and initiates PayPal checkout by returning approval data."
+    )]
     [ProducesResponseType(typeof(ApiResponse<CheckoutResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status401Unauthorized)]
@@ -63,6 +68,10 @@ public class OrdersController : BaseApiController
 
     [EnableRateLimiting(RateLimitPolicies.Strict)]
     [HttpPost("{orderId:guid}/capture")]
+    [SwaggerOperation(
+        Summary = "Capture order payment",
+        Description = "Finalizes the PayPal two-step checkout by capturing payment for the given order id using the provided PayPal order identifier."
+    )]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status401Unauthorized)]
@@ -89,6 +98,10 @@ public class OrdersController : BaseApiController
     
     [EnableRateLimiting(RateLimitPolicies.Strict)]
     [HttpPost("{orderId:guid}/retry")]
+    [SwaggerOperation(
+        Summary = "Retry payment",
+        Description = "Generates a fresh PayPal approval link for orders in PendingPayment or PaymentFailed, letting the shopper restart the checkout flow."
+    )]
     [ProducesResponseType(typeof(ApiResponse<CheckoutResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status401Unauthorized)]
@@ -109,6 +122,10 @@ public class OrdersController : BaseApiController
     }
     
     [HttpGet("{orderId:guid}")]
+    [SwaggerOperation(
+        Summary = "Get order by id",
+        Description = "Returns order details (items, totals, status) for the authenticated user if they own the specified order."
+    )]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ApiResponse<OrderDto>), StatusCodes.Status404NotFound)]
@@ -131,6 +148,10 @@ public class OrdersController : BaseApiController
     }
 
     [HttpGet("user-orders")]
+    [SwaggerOperation(
+        Summary = "List user orders",
+        Description = "Returns the authenticated user’s order history in reverse chronological order, including statuses for each order."
+    )]
     [ProducesResponseType(typeof(ApiResponse<List<OrderDto>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<List<OrderDto>>), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> GetUserOrders()

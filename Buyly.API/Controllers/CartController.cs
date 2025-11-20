@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Buyly.API.Models;
 using Microsoft.AspNetCore.RateLimiting;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Buyly.API.Controllers
 {
@@ -24,6 +25,10 @@ namespace Buyly.API.Controllers
 
         [EnableRateLimiting(RateLimitPolicies.Strict)]
         [HttpPost("items")]
+        [SwaggerOperation(
+            Summary = "Add an item to the cart",
+            Description = "Adds a product (or increments quantity) in the authenticated user’s cart. Respects strict rate limiting to prevent rapid-fire updates."
+        )]
         [ProducesResponseType(typeof(ApiResponse<CartItemDto>), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -37,6 +42,10 @@ namespace Buyly.API.Controllers
         }
 
         [HttpGet]
+        [SwaggerOperation(
+            Summary = "Get current cart",
+            Description = "Returns line items, quantities, pricing, and totals for the signed-in user. Useful for rendering checkout or cart pages."
+        )]
         [ProducesResponseType(typeof(ApiResponse<CartDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> GetCart()
@@ -49,6 +58,10 @@ namespace Buyly.API.Controllers
 
         [EnableRateLimiting(RateLimitPolicies.Strict)]
         [HttpPut("items/{id:guid}")]
+        [SwaggerOperation(
+            Summary = "Update a cart item",
+            Description = "Updates the quantity of an existing cart item by cart-item id. Rejects invalid quantities and enforces ownership."
+        )]
         [ProducesResponseType(typeof(ApiResponse<CartItemDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
@@ -63,6 +76,10 @@ namespace Buyly.API.Controllers
 
         [EnableRateLimiting(RateLimitPolicies.Strict)]
         [HttpDelete("items/{id:guid}")]
+        [SwaggerOperation(
+            Summary = "Remove a cart item",
+            Description = "Removes a specific cart item by its identifier, allowing the UI to drop individual lines."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
@@ -81,6 +98,10 @@ namespace Buyly.API.Controllers
 
         [EnableRateLimiting(RateLimitPolicies.Strict)]
         [HttpDelete]
+        [SwaggerOperation(
+            Summary = "Clear the entire cart",
+            Description = "Deletes every line item for the authenticated user; typically used after checkout or explicit 'clear cart' action."
+        )]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> ClearCart()
